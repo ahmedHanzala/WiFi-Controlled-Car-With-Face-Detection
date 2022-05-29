@@ -1,9 +1,4 @@
-#include "esp_http_server.h"
-#include "esp_timer.h"
-#include "esp_camera.h"
-#include "img_converters.h"
-#include "camera_index.h"
-#include "Arduino.h"
+
 
 extern int LeftBack;
 extern int LeftFront;
@@ -26,7 +21,6 @@ typedef struct {
         size_t len;
 } jpg_chunking_t;
 
-#define PART_BOUNDARY "123456789000000000000987654321"
 static const char* _STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
 static const char* _STREAM_BOUNDARY = "\r\n--" PART_BOUNDARY "\r\n";
 static const char* _STREAM_PART = "Content-Type: image/jpeg\r\nContent-Length: %u\r\n\r\n";

@@ -64,10 +64,10 @@ void setup() {
   pinMode(gasSensor,OUTPUT);
 
   //initialize
-  digitalWrite(LeftBack, LOW);
-  digitalWrite(LeftFront, LOW);
-  digitalWrite(RightBack, LOW);
-  digitalWrite(RightFront, LOW);
+  digitalWrite(LeftBack, HIGH);
+  digitalWrite(LeftFront, HIGH);
+  digitalWrite(RightBack, HIGH);
+  digitalWrite(RightFront, HIGH);
   digitalWrite(LED
 , LOW);
 
