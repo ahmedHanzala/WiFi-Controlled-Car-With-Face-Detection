@@ -26,9 +26,34 @@ const char* password = "nintendo1231@@";   //Enter WIFI Password
 #define HREF_GPIO_NUM     23
 #define PCLK_GPIO_NUM     22
 
-#else
-#error "Camera model not selected"
+#else 
+defined(CAMERA_MODEL_ESP_EYE)
+  pinMode(13, INPUT_PULLUP);
+  pinMode(14, INPUT_PULLUP);
 #endif
+
+  // camera init
+  esp_err_t err = esp_camera_init(&config);
+  if (err != ESP_OK) {
+    Serial.printf("Camera init failed with error 0x%x", err);
+    return;
+  }
+
+  sensor_t * s = esp_camera_sensor_get();
+  // initial sensors are flipped vertically and colors are a bit saturated
+  if (s->id.PID == OV3660_PID) {
+    s->set_vflip(s, 1); // flip it back
+    s->set_brightness(s, 1); // up the brightness just a bit
+    s->set_saturation(s, -2); // lower the saturation
+  }
+  // drop down frame size for higher initial frame rate
+  s->set_framesize(s, FRAMESIZE_QVGA);
+
+#if defined(CAMERA_MODEL_M5STACK_WIDE) || defined(CAMERA_MODEL_M5STACK_ESP32CAM)
+  s->set_vflip(s, 1);
+  s->set_hmirror(s, 1);
+#endif
+
 
 // GPIO Setting
 extern int LeftBack =  2; // Left 1 N1
@@ -64,9 +89,9 @@ void setup() {
   pinMode(gasSensor,OUTPUT);
 
   //initialize
-  digitalWrite(LeftBack, HIGH);
+  digitalWrite(LeftBack, LOW);
   digitalWrite(LeftFront, LOW);
-  digitalWrite(RightBack, HIGH);
+  digitalWrite(RightBack, LOW);
   digitalWrite(RightFront, LOW);
   digitalWrite(LED
 , LOW);
