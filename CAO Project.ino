@@ -65,9 +65,9 @@ void setup() {
 
   //initialize
   digitalWrite(LeftBack, HIGH);
-  digitalWrite(LeftFront, HIGH);
+  digitalWrite(LeftFront, LOW);
   digitalWrite(RightBack, HIGH);
-  digitalWrite(RightFront, HIGH);
+  digitalWrite(RightFront, LOW);
   digitalWrite(LED
 , LOW);
 
