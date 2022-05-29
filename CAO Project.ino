@@ -1,13 +1,51 @@
+//abc
 #include "esp_camera.h"
 #include <WiFi.h>
+#define CAMERA_MODEL_AI_THINKER
 
-#define CAMERA_MODEL_AI_THINKER // Has PSRAM
+const char* ssid = "caocar";   //Enter SSID WIFI Name
+const char* password = "nintendo1231@@";   //Enter WIFI Password
 
 
-#include "camera_pins.h"
+#if defined(CAMERA_MODEL_AI_THINKER) //CAMERA CONFIG
+#define PWDN_GPIO_NUM     32
+#define RESET_GPIO_NUM    -1
+#define XCLK_GPIO_NUM      0
+#define SIOD_GPIO_NUM     26
+#define SIOC_GPIO_NUM     27
 
-const char* ssid = "Notspot";
-const char* password = "123123123";
+#define Y9_GPIO_NUM       35
+#define Y8_GPIO_NUM       34
+#define Y7_GPIO_NUM       39
+#define Y6_GPIO_NUM       36
+#define Y5_GPIO_NUM       21
+#define Y4_GPIO_NUM       19
+#define Y3_GPIO_NUM       18
+#define Y2_GPIO_NUM        5
+#define VSYNC_GPIO_NUM    25
+#define HREF_GPIO_NUM     23
+#define PCLK_GPIO_NUM     22
+
+#else
+#error "Camera model not selected"
+#endif
+
+// GPIO Setting
+extern int LeftBack =  2; // Left 1 N1
+extern int LeftFront = 14; // Left 2 N2
+extern int RightBack = 15; // Right 1 N3
+extern int RightFront = 13; // Right 2 N4
+extern int LED =  4; // Light
+extern int gasSensor= 16; //gas detector
+int gasValue;
+extern String WiFiAddr ="";
+
+String readGasValues() {
+  
+  int gasValue=analogRead(gasSensor);;
+    Serial.println(gasValue);
+    return String(gasValue);
+}
 
 void startCameraServer();
 
@@ -15,6 +53,23 @@ void setup() {
   Serial.begin(115200);
   Serial.setDebugOutput(true);
   Serial.println();
+
+
+  pinMode(LeftBack, OUTPUT); //Left Backward
+  pinMode(LeftFront, OUTPUT); //Left Forward
+  pinMode(RightBack, OUTPUT); //Right Forward
+  pinMode(RightFront, OUTPUT); //Right Backward
+  pinMode(LED
+, OUTPUT); //Light
+  pinMode(gasSensor,OUTPUT);
+
+  //initialize
+  digitalWrite(LeftBack, LOW);
+  digitalWrite(LeftFront, LOW);
+  digitalWrite(RightBack, LOW);
+  digitalWrite(RightFront, LOW);
+  digitalWrite(LED
+, LOW);
 
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -37,9 +92,7 @@ void setup() {
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
-  
-  // if PSRAM IC present, init with UXGA resolution and higher JPEG quality
-  //                      for larger pre-allocated frame buffer.
+  //init with high specs to pre-allocate larger buffers
   if(psramFound()){
     config.frame_size = FRAMESIZE_UXGA;
     config.jpeg_quality = 10;
@@ -50,11 +103,6 @@ void setup() {
     config.fb_count = 1;
   }
 
-#if defined(CAMERA_MODEL_ESP_EYE)
-  pinMode(13, INPUT_PULLUP);
-  pinMode(14, INPUT_PULLUP);
-#endif
-
   // camera init
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
@@ -62,20 +110,9 @@ void setup() {
     return;
   }
 
+  //drop down frame size for higher initial frame rate
   sensor_t * s = esp_camera_sensor_get();
-  // initial sensors are flipped vertically and colors are a bit saturated
-  if (s->id.PID == OV3660_PID) {
-    s->set_vflip(s, 1); // flip it back
-    s->set_brightness(s, 1); // up the brightness just a bit
-    s->set_saturation(s, -2); // lower the saturation
-  }
-  // drop down frame size for higher initial frame rate
-  s->set_framesize(s, FRAMESIZE_QVGA);
-
-#if defined(CAMERA_MODEL_M5STACK_WIDE) || defined(CAMERA_MODEL_M5STACK_ESP32CAM)
-  s->set_vflip(s, 1);
-  s->set_hmirror(s, 1);
-#endif
+  s->set_framesize(s, FRAMESIZE_CIF);
 
   WiFi.begin(ssid, password);
 
@@ -90,10 +127,12 @@ void setup() {
 
   Serial.print("Camera Ready! Use 'http://");
   Serial.print(WiFi.localIP());
+  WiFiAddr = WiFi.localIP().toString();
   Serial.println("' to connect");
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  delay(10000);
+
+Serial.print(readGasValue());
 }
+
