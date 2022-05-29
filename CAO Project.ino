@@ -3,6 +3,14 @@
 #define left_backward 15
 #define right_backward 12
 
+#include "esp_camera.h"
+#include <WiFi.h>
+#define CAMERA_MODEL_AI_THINKER
+
+const char* ssid = "caocar";   //Enter SSID WIFI Name
+const char* password = "nintendo1231@@";   //Enter WIFI Password
+
+
 
 #define Analog_Output 2
 #define Digital_Output 4
