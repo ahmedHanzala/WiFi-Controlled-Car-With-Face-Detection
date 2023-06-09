@@ -1,4 +1,4 @@
-<h1>Arduino Wi-Fi Controlled Car with Face Detection</h1>
+<h1> &#x1F697; Arduino Wi-Fi Controlled Car with Face Detection</h1>
 
 <p>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
